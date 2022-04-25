@@ -4,6 +4,10 @@ let forms = [
     {
         questions : [
             {
+                type: 'p',
+                content: 'The following study explores the IKEA effect and is expected to take at most 15 - 20 minutes to complete. There are no expected risks to the participants, all will leave with some compensation. Participation in this study is completely voluntary and you can stop at any time. Please contact hayeseve@grinnell.edu with any questions.'
+            },
+            {
                 id : 'password',
                 type : 'text',
                 label : 'Password',
@@ -34,6 +38,11 @@ let forms = [
         script : () => {
             $('#SendRequest').click(doShit);
         }
+    },
+    {
+        questions : [
+
+        ]
     }
 ]
 
@@ -60,6 +69,9 @@ function genericRender(form) {
             let button = `<button id="${question.label}" type="button" onclick="${question.onclick}">${question.label}</button>`;
             container.append(button);
             $('#' + question.label).click(question.onclick);
+        } else if (question.type == 'p') {
+            let p = `<p>${question.content}</p>`
+            container.append(p);
         }
     }
 
@@ -68,7 +80,8 @@ function genericRender(form) {
 
 function doShit() {
     let responseService = new ResponseService();
-    responseService.sendResponse({value : 'a test from the localhost'});
+    response.value = response.email;
+    responseService.sendResponse(response);
 }
 
 function wrapFirstPage() {
@@ -78,7 +91,14 @@ function wrapFirstPage() {
         return;
     }
 
+    if ($('#email-input').val() == '') {
+        window.alert('I need an email to tie the response to!');
+        return;
+    }
+
     response.email = $('#email-input').val();
+    response.isTreament = Math.floor(Math.random() * 2) === 1;
+
     startSecondPage();
 }
 
