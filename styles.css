@@ -52,33 +52,14 @@ input {
     font-weight: 400;
     background-color: #fafafa;
     border: 1px solid #e1e1e1;
-    transition: all 0.4s ease-out;
+    /* transition: all 0.4s ease-out; */
 }
 
 input:hover {
-    border: 1px solid rgba(25, 4, 69, 0.6);
+    border: 1px solid rgba(25, 4, 69, 0.4);
 }
 
 input:focus {
-    border: 1px solid rgba(25, 4, 69, 0.8);
+    border: 1.5px solid rgba(25, 4, 69, 0.8);
     outline-style: none;
 }
-
-/* .form-input {
-    background-color: white;
-    height: 42px;
-    margin: 0px;
-    font-size: 14px;
-    padding: 0px 10px 0px 45px;
-    box-shadow: rgb(25 4 69 / 5%) 0px 3px 6px;
-    border: 1px solid rgba(25, 4, 69, 0.1);
-    transition: all 0.4s ease-out;
-} */
-
-/* .form-input :hover {
-    border: 1px solid rgba(25, 4, 69, 0.6);
-} */
-
-/* .form-input :focus {
-    border: 1px solid rgba(25, 4, 69, 0.8);
-} */
