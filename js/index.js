@@ -1,9 +1,10 @@
 import { ResponseService } from './service/ResponseService.js';
 
-let forms = [
-    {
+let forms = {
+    intro : {
         questions : [
             {
+                id : 'description',
                 type: 'p',
                 content: 'The following study explores the IKEA effect and is expected to take at most 15 - 20 minutes to complete. There are no expected risks to the participants, all will leave with some compensation. Participation in this study is completely voluntary and you can stop at any time. Please contact hayeseve@grinnell.edu with any questions.'
             },
@@ -29,7 +30,7 @@ let forms = [
             $('#next-button').click(wrapFirstPage);
         }
     },
-    {
+    controlStart : {
         questions : [
             {
                 type : 'button',
@@ -41,9 +42,10 @@ let forms = [
             $('#spin-button').click(spinTheWheel);
         }
     },
-    {
+    treatmentStart : {
         questions : [
             {
+                id : 'instructions',
                 type : 'p',
                 content : 'I am instructions on how to complete the experiment!',
             },
@@ -54,27 +56,87 @@ let forms = [
             }
         ],
         script : () => {
-
+            $('#start-button').click(startQuiz);
         }
     },
-    {
+    firstOffer : {
         questions : [
             {
-                type: 'p',
-                content: 'lets goo'
+                id : 'offer-p',
+                type : 'p',
+                content : 'l'
+            },
+            {
+                type : 'button',
+                id : 'accept-button',
+                label : 'Accept Trade',
+            },
+            {
+                type : 'button',
+                id : 'reject-button',
+                label : 'Reject Trade',
             }
         ],
         script : () => {
-            console.log('yeet');
+            // $('accept-button').click();
+            $('#reject-button').click(secondOffer);
+            $('#offer-p').text(`You can either choose to keep your current candy (${response.candyWon}) or trade the candy you have for ${response.candyWon} quarters.`);
+        }
+    },
+    secondOffer : {
+        questions : [
+            {
+                id : 'offer-p',
+                type : 'p',
+                content : 'l'
+            },
+            {
+                type : 'button',
+                id : 'accept-button',
+                label : 'Accept Trade',
+            },
+            {
+                type : 'button',
+                id : 'reject-button',
+                label : 'Reject Trade',
+            }
+        ],
+        script : () => {
+            $('#reject-button').click(thirdOffer);
+            $('#offer-p').text(`You can either choose to keep your current candy (${response.candyWon}) or trade the candy you have for ${response.candyWon + 1} quarters.`);
+        }
+    },
+    thirdOffer : {
+        questions : [
+            {
+                id : 'offer-p',
+                type : 'p',
+                content : 'l'
+            },
+            {
+                type : 'button',
+                id : 'accept-button',
+                label : 'Accept Trade',
+            },
+            {
+                type : 'button',
+                id : 'reject-button',
+                label : 'Reject Trade',
+            }
+        ],
+        script : () => {
+            $('#offer-p').text(`You can either choose to keep your current candy (${response.candyWon}) or trade the candy you have for ${response.candyWon + 2} quarters.`);
+        }
+    },
+    outro : {
+        questions : [],
+        script : () => {
+            
         }
     }
-]
+}
 
 let response = {};
-
-function render() {
-    genericRender(forms[0]);
-}
 
 function genericRender(form) {
 
@@ -93,7 +155,7 @@ function genericRender(form) {
             let button = `<button id="${question.id}" type="button" onclick="${question.onclick}">${question.label}</button>`;
             container.append(button);
         } else if (question.type == 'p') {
-            let p = `<p>${question.content}</p>`
+            let p = `<p id="${question.id}">${question.content}</p>`
             container.append(p);
         }
     }
@@ -101,10 +163,8 @@ function genericRender(form) {
     form.script();
 }
 
-function doShit() {
-    let responseService = new ResponseService();
-    response.value = response.email;
-    responseService.sendResponse(response);
+function render() {
+    genericRender(forms.intro);
 }
 
 function wrapFirstPage() {
@@ -122,11 +182,13 @@ function wrapFirstPage() {
     response.email = $('#email-input').val();
     response.isTreament = Math.floor(Math.random() * 2) === 1;
 
-    if (!response.isTreament) {
-        startControl();
-    } else {
-        startTreatment();
-    }
+    startControl();
+
+    // if (!response.isTreament) {
+    //     startControl();
+    // } else {
+    //     startTreatment();
+    // }
 }
 
 let theWheel;
@@ -137,7 +199,7 @@ function spinTheWheel() {
 }
 
 function startControl() {
-    genericRender(forms[1]);
+    genericRender(forms.controlStart);
     let canvas = '<canvas id="canvas" width="880" height="450"> Canvas not supported, use another browser. </canvas>';
     $('#form-container').append(canvas);
 
@@ -179,16 +241,79 @@ function startControl() {
     });
 }
 
-function startTreatment() {
-    genericRender(forms[2]);
-}
-
 // Called when the animation has finished.
 function alertPrize(indicatedSegment) {
     alert("You have won " + indicatedSegment.text);
-    genericRender(forms[3]);
+    response.candyWon = parseInt(indicatedSegment.text[0]);
+    genericRender(forms.firstOffer);
 }
 
+function secondOffer() {
+    genericRender(forms.secondOffer);
+}
+
+function thirdOffer() {
+    genericRender(forms.thirdOffer);
+}
+
+function wrapLogic() {
+
+    // get response ready
+
+    // show closing
+}
+
+// function startTreatment() {
+//     genericRender(forms[2]);
+// }
+
+// let countSolved = 0;
+
+// function onTimerFinish() {
+//     alert('You finished ' + countSolved);
+// }
+
+// function startTimer(duration, displayID) {
+//     var timer = duration, minutes, seconds;
+//     let id = setInterval(function () {
+//         minutes = parseInt(timer / 60, 10);
+//         seconds = parseInt(timer % 60, 10);
+
+//         minutes = minutes < 10 ? "0" + minutes : minutes;
+//         seconds = seconds < 10 ? "0" + seconds : seconds;
+
+//         document.getElementById(displayID).innerHTML = minutes + ":" + seconds;
+
+//         if (--timer < 0) {
+//             console.log('DONEEEEEEEEEEEE');
+//             onTimerFinish();
+//             clearInterval(id);
+//         }
+//     }, 1000);
+// }
+
+// function startQuiz() {
+//     genericRender(forms[4]);
+//     startTimer(60, 'timer-p');
+//     renderQuizQuestion();
+// }
+
+// function renderQuizQuestion(isFirst) {
+
+//     if (!isFirst) {
+//         // check existing answer
+//     }
+
+//     // clear & render content
+
+//     // set button onclick to recurse renderQuizQuestion(false);
+// }
+
+// function doShit() {
+//     let responseService = new ResponseService();
+//     response.value = response.email;
+//     responseService.sendResponse(response);
+// }
 
 render();
 
