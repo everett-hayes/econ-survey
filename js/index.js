@@ -78,7 +78,11 @@ let forms = {
             }
         ],
         script : () => {
-            // $('accept-button').click();
+            $('#accept-button').click(function () {
+                response.candyAccepted = 0;
+                response.moneyWon = response.candyWon * .25;
+                outro();
+            });
             $('#reject-button').click(secondOffer);
             $('#offer-p').text(`You can either choose to keep your current candy (${response.candyWon}) or trade the candy you have for ${response.candyWon} quarters.`);
         }
@@ -102,6 +106,11 @@ let forms = {
             }
         ],
         script : () => {
+            $('#accept-button').click(function() {
+                response.candyAccepted = 0;
+                response.moneyWon = response.candyWon * .25 + .25;
+                outro();
+            });
             $('#reject-button').click(thirdOffer);
             $('#offer-p').text(`You can either choose to keep your current candy (${response.candyWon}) or trade the candy you have for ${response.candyWon + 1} quarters.`);
         }
@@ -125,13 +134,64 @@ let forms = {
             }
         ],
         script : () => {
+            $('#accept-button').click(function() {
+                response.candyAccepted = 0;
+                response.moneyWon = response.candyWon * .25 + .50;
+                outro();
+            });
+            $('#reject-button').click(function() {
+                response.candyAccepted = response.candyWon;
+                response.moneyWon = 0;
+                outro();
+            });
             $('#offer-p').text(`You can either choose to keep your current candy (${response.candyWon}) or trade the candy you have for ${response.candyWon + 2} quarters.`);
         }
     },
     outro : {
-        questions : [],
+        questions : [
+            {
+                id : 'title',
+                type : 'p',
+                content : 'Expirement Closing Document:'
+            },
+            {
+                id : 'amount',
+                type : 'p',
+                content : ''
+            },
+            {
+                id : 'signature',
+                type : 'text',
+                label : 'Signature',
+                hint : ''
+            },
+            {
+                id : 'date',
+                type : 'text',
+                label : 'Date',
+                hint : ''
+            },
+            {
+                type : 'button',
+                id : 'send-button',
+                label : 'Send Results!',
+            },
+        ],
         script : () => {
-            
+            $('#send-button').click(sendResponse);
+            $('#amount').text(`Thank you for participating in this study! You will be compensated with ${response.candyAccepted} piece(s) of candy and \$${response.moneyWon}. Please sign you name below to confirm your payment.`);
+        }
+    },
+    allDone : {
+        questions : [
+            {
+                id : 'close',
+                type : 'p',
+                content : 'Results have been sent!!!'
+            }
+        ],
+        script : () => {
+
         }
     }
 }
@@ -254,6 +314,31 @@ function secondOffer() {
 
 function thirdOffer() {
     genericRender(forms.thirdOffer);
+}
+
+function outro() {
+    genericRender(forms.outro);
+}
+
+function sendResponse() {
+
+    if ($('#signature-input').val() == '' || $('#date-input').val() == '') {
+        window.alert('Please sign and date the closing document!');
+        return;
+    }
+
+    response.signature = $('#signature-input').val();
+    response.date = $('#date-input').val();
+    response.dateActual = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+
+    if (!'mathQuestionsAnswered' in response) {
+        response.mathQuestionsAnswered = 'N/A';
+    }
+
+    let responseService = new ResponseService();
+    responseService.sendResponse(response);
+
+    genericRender(forms.allDone);
 }
 
 function wrapLogic() {
