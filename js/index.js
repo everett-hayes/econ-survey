@@ -52,7 +52,7 @@ let forms = {
             {
                 id : 'relation',
                 type : 'p',
-                content : '1 - 20 correct ➡️ 1 candy <br/> 21 - 30 correct ➡️ 2 candies <br/> 30+ correct ➡️ 3 candies',
+                content : '0 - 15 correct ➡️ 1 candy <br/> 16 - 25 correct ➡️ 2 candies <br/> 25+ correct ➡️ 3 candies',
             },
             {
                 type : 'button',
@@ -105,10 +105,20 @@ let forms = {
                 id : 'results-p',
                 type : 'p',
                 content : 'l'
+            },
+            {
+                id : 'next-button',
+                type : 'button',
+                label : 'Next'
             }
         ],
         script : () => {
-            $('#results-p').text('Congrats you finished some shit!');
+            response.mathQuestionsAnswered = countSolved;
+            response.candyWon = convertSolvedToCandy(countSolved);
+            $('#results-p').text(`Congrats you correctly answered ${countSolved}. This corresponds to ${convertSolvedToCandy(countSolved)} pieces of candy.`);
+            $('#next-button').click(function() {
+                genericRender(forms.firstOffer)
+            });
         }
     },
     firstOffer : {
@@ -293,15 +303,13 @@ function wrapFirstPage() {
     }
 
     response.email = $('#email-input').val();
-    response.isTreament = Math.floor(Math.random() * 2) === 1;
+    response.isTreament = Math.floor(Math.random() * 2) === 1;;
 
-    startTreatment();
-
-    // if (!response.isTreament) {
-    //     startControl();
-    // } else {
-    //     startTreatment();
-    // }
+    if (!response.isTreament) {
+        startControl();
+    } else {
+        startTreatment();
+    }
 }
 
 let theWheel;
@@ -328,13 +336,13 @@ function startControl() {
             {'fillStyle' : '#6B2737', 'text' : '1 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
             {'fillStyle' : '#84DCC6', 'text' : '2 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
             {'fillStyle' : '#007EA7', 'text' : '3 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#EA7317', 'text' : '4 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#FEC601', 'text' : '1 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#D90368', 'text' : '2 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#6B2737', 'text' : '3 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#84DCC6', 'text' : '4 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#007EA7', 'text' : '1 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
-            {'fillStyle' : '#EA7317', 'text' : '2 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#EA7317', 'text' : '1 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#FEC601', 'text' : '2 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#D90368', 'text' : '3 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#6B2737', 'text' : '1 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#84DCC6', 'text' : '2 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#007EA7', 'text' : '3 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
+            {'fillStyle' : '#EA7317', 'text' : '1 Candy', 'textFontSize' : 18, 'textFillStyle' : '#ffffff'},
         ],
         'animation' :           // Specify the animation to use.
         {
@@ -424,7 +432,7 @@ function startTimer(duration, displayID) {
 
 function startQuiz() {
     genericRender(forms.treatmentContent);
-    startTimer(180, 'timer-p');
+    startTimer(30, 'timer-p');
     renderQuizQuestion(true);
 }
 
@@ -483,10 +491,14 @@ function renderQuizQuestion(isFirst) {
     } 
 }
 
-function doShit() {
-    let responseService = new ResponseService();
-    response.value = response.email;
-    responseService.sendResponse(response);
+function convertSolvedToCandy(countSolved) {
+    if (countSolved <= 15) {
+        return 1;
+    } else if (countSolved <= 25) {
+        return 2;
+    } else {
+        return 3;
+    }
 }
 
 render();
