@@ -115,7 +115,7 @@ let forms = {
         script : () => {
             response.mathQuestionsAnswered = countSolved;
             response.candyWon = convertSolvedToCandy(countSolved);
-            $('#results-p').text(`Congrats you correctly answered ${countSolved}. This corresponds to ${convertSolvedToCandy(countSolved)} pieces of candy.`);
+            $('#results-p').text(`Congrats you correctly answered ${countSolved} questions. This corresponds to ${convertSolvedToCandy(countSolved)} piece(s) of candy.`);
             $('#next-button').click(function() {
                 genericRender(forms.firstOffer)
             });
@@ -214,7 +214,7 @@ let forms = {
             {
                 id : 'title',
                 type : 'p',
-                content : 'Expirement Closing Document:'
+                content : 'Experiment Closing Document:'
             },
             {
                 id : 'amount',
