@@ -59,6 +59,53 @@ let forms = {
             $('#start-button').click(startQuiz);
         }
     },
+    treatmentContent : {
+        questions : [
+            {
+                id : 'timer-p',
+                type : 'p',
+                content : '02:00'
+            },
+            {
+                id : 'question-div',
+                type : 'div'
+            },
+            {
+                id : 'answer',
+                type : 'text',
+                label : 'Your Answer',
+                hint : ''
+            },
+            {
+                id : 'submit-answer',
+                type : 'button',
+                label : 'Submit Answer'
+            }
+        ],
+        script : () => {
+            $('#submit-answer').click(function() {
+                renderQuizQuestion(false);
+            })
+
+            $(document).keypress(function (e) {
+                if (e.which == 13){
+                    $("#submit-answer").click();
+                }
+            });
+        }
+    },
+    treatmentEnd : {
+        questions : [
+            {
+                id : 'results-p',
+                type : 'p',
+                content : 'l'
+            }
+        ],
+        script : () => {
+            $('#results-p').text('Congrats you finished some shit!');
+        }
+    },
     firstOffer : {
         questions : [
             {
@@ -190,9 +237,7 @@ let forms = {
                 content : 'Results have been sent!!!'
             }
         ],
-        script : () => {
-
-        }
+        script : () => {}
     }
 }
 
@@ -217,6 +262,9 @@ function genericRender(form) {
         } else if (question.type == 'p') {
             let p = `<p id="${question.id}">${question.content}</p>`
             container.append(p);
+        } else if (question.type == 'div') {
+            let div = `<div id="${question.id}"></div>`;
+            container.append(div);
         }
     }
 
@@ -242,7 +290,7 @@ function wrapFirstPage() {
     response.email = $('#email-input').val();
     response.isTreament = Math.floor(Math.random() * 2) === 1;
 
-    startControl();
+    startTreatment();
 
     // if (!response.isTreament) {
     //     startControl();
@@ -341,64 +389,100 @@ function sendResponse() {
     genericRender(forms.allDone);
 }
 
-function wrapLogic() {
-
-    // get response ready
-
-    // show closing
+function startTreatment() {
+    genericRender(forms.treatmentStart);
 }
 
-// function startTreatment() {
-//     genericRender(forms[2]);
-// }
+function onTimerFinish() {
+    genericRender(forms.treatmentEnd);
+}
 
-// let countSolved = 0;
+let countSolved = 0;
 
-// function onTimerFinish() {
-//     alert('You finished ' + countSolved);
-// }
+function startTimer(duration, displayID) {
+    var timer = duration, minutes, seconds;
+    let id = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
 
-// function startTimer(duration, displayID) {
-//     var timer = duration, minutes, seconds;
-//     let id = setInterval(function () {
-//         minutes = parseInt(timer / 60, 10);
-//         seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
 
-//         minutes = minutes < 10 ? "0" + minutes : minutes;
-//         seconds = seconds < 10 ? "0" + seconds : seconds;
+        document.getElementById(displayID).innerHTML = minutes + ":" + seconds + ' You have solved ' + countSolved + ' problem(s).' ;
 
-//         document.getElementById(displayID).innerHTML = minutes + ":" + seconds;
+        if (--timer < 0) {
+            onTimerFinish();
+            clearInterval(id);
+        }
+    }, 1000);
+}
 
-//         if (--timer < 0) {
-//             console.log('DONEEEEEEEEEEEE');
-//             onTimerFinish();
-//             clearInterval(id);
-//         }
-//     }, 1000);
-// }
+function startQuiz() {
+    genericRender(forms.treatmentContent);
+    startTimer(60, 'timer-p');
+    renderQuizQuestion(true);
+}
 
-// function startQuiz() {
-//     genericRender(forms[4]);
-//     startTimer(60, 'timer-p');
-//     renderQuizQuestion();
-// }
+let a = null;
+let b = null;
+let c = null;
+let d = null;
+let e = null;
+let f = null;
 
-// function renderQuizQuestion(isFirst) {
+let questionType = 1;
 
-//     if (!isFirst) {
-//         // check existing answer
-//     }
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max) + 1;
+  }
 
-//     // clear & render content
+function renderQuizQuestion(isFirst) {
 
-//     // set button onclick to recurse renderQuizQuestion(false);
-// }
+    let userAnswer = parseInt($('#answer-input').val());
 
-// function doShit() {
-//     let responseService = new ResponseService();
-//     response.value = response.email;
-//     responseService.sendResponse(response);
-// }
+    if (!isFirst) {
+
+        if (questionType === 1) {
+            console.log(userAnswer);
+            console.log(b);
+            if (userAnswer === (e + d) / a + f) {
+                countSolved++;
+            }
+        } else if (questionType === 2) {
+            if (userAnswer === (c / b) * a + e) {
+                countSolved++;
+            } else {
+                console.log('incorrect!');
+            }
+        }
+    }
+
+    // clear & render content
+    $('#question-div').empty();
+    $('#answer-input').val('');
+
+    a = getRandomInt(10);
+    b = getRandomInt(10);
+    c = a * b;
+    d = getRandomInt(10);
+    e = c - d;
+    f = getRandomInt(20);
+
+    questionType = getRandomInt(2);
+    console.log('questionType was generated to be ' + questionType);
+
+    if (questionType === 1) {
+        $('#question-div').append(`<p>Question: (${e} + ${d}) / ${a} + ${f} = ?</p>`);    
+    } else if (questionType === 2) {
+        $('#question-div').append(`<p>Question: (${c} / ${b}) * ${a} + ${e} = ?</p>`);    
+    } 
+}
+
+function doShit() {
+    let responseService = new ResponseService();
+    response.value = response.email;
+    responseService.sendResponse(response);
+}
 
 render();
 
