@@ -6,7 +6,7 @@ let forms = {
             {
                 id : 'description',
                 type: 'p',
-                content: 'The following study explores the IKEA effect and is expected to take at most 15 - 20 minutes to complete. There are no expected risks to the participants, all will leave with some compensation. Participation in this study is completely voluntary and you can stop at any time. Please contact hayeseve@grinnell.edu with any questions.'
+                content: 'The following study explores the IKEA effect and is expected to take at most ~5 minutes to complete. There are no expected risks to the participants, all will leave with some compensation. Participation in this study is completely voluntary and you can stop at any time. Please contact <a href = "mailto: hayeseve@grinnel.edu">hayeseve@grinnell.edu</a> with any questions.'
             },
             {
                 id : 'password',
@@ -47,7 +47,12 @@ let forms = {
             {
                 id : 'instructions',
                 type : 'p',
-                content : 'I am instructions on how to complete the experiment!',
+                content : 'You will have 3 minutes to answer as many math questions as you can. Feel free to use a piece of scratch paper. At the top you will see a timer and the amount of questions you have solved so far. At the end of the quiz you will be awarded some amount of candy depending on how many questions you are able to solve.',
+            },
+            {
+                id : 'relation',
+                type : 'p',
+                content : '1 - 20 correct ➡️ 1 candy <br/> 21 - 30 correct ➡️ 2 candies <br/> 30+ correct ➡️ 3 candies',
             },
             {
                 type : 'button',
@@ -419,7 +424,7 @@ function startTimer(duration, displayID) {
 
 function startQuiz() {
     genericRender(forms.treatmentContent);
-    startTimer(60, 'timer-p');
+    startTimer(180, 'timer-p');
     renderQuizQuestion(true);
 }
 
