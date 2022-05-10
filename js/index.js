@@ -69,7 +69,7 @@ let forms = {
             {
                 id : 'timer-p',
                 type : 'p',
-                content : '02:00'
+                content : '03:00'
             },
             {
                 id : 'question-div',
@@ -432,7 +432,7 @@ function startTimer(duration, displayID) {
 
 function startQuiz() {
     genericRender(forms.treatmentContent);
-    startTimer(30, 'timer-p');
+    startTimer(180, 'timer-p');
     renderQuizQuestion(true);
 }
 
